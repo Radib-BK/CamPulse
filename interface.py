@@ -203,20 +203,7 @@ def plotXY(data,size = (480,640),margin = 25,name = "data",labels=[], skip = [],
         m = []
         for i in range(len(p)-1):
             cv2.line(z,tuple(p[i]),tuple(p[i+1]), (255,255,255),1)
-            #draw the max and min points
-            # if len(maxtab>0) and i in maxtab[:,0]:
-                # cv2.circle(z,tuple(p[i]), 5, (255, 255, 0), -1)
-            # if len(mintab>0) and i in mintab[:,0]:
-                # cv2.circle(z,tuple(p[i]), 5, (0, 0, 255), -1)
-            
-            # if i in mix:
-                # m.append(p[i])
-            # for ii in range(len(m)-1):
-                # cv2.line(z, tuple(m[ii]), tuple(m[ii+1]),(255,255,255),1)
-    
-    # for p in P[mix]:
-        # for i in range(len(mix)-1):
-            # cv2.line(z, tuple(p[i]), tuple(p[i+1]),(255,255,255),5)
+
                 
     cv2.imshow(name,z)
     

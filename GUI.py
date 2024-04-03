@@ -71,7 +71,6 @@ class GUI(QMainWindow, QThread):
         self.cbbInput.move(20,520)
         self.cbbInput.setFont(font)
         self.cbbInput.activated.connect(self.selectInput)
-        #-------------------
         
         self.lblDisplay = QLabel(self) #label to show frame from camera
         self.lblDisplay.setGeometry(10,10,640,480)
@@ -89,7 +88,7 @@ class GUI(QMainWindow, QThread):
         self.lblHR2 = QLabel(self) #label to show stable HR
         self.lblHR2.setGeometry(900,70,300,40)
         self.lblHR2.setFont(font)
-        self.lblHR2.setText("Heart rate: ")
+        self.lblHR2.setText("Calculating: ")
 
         self.lblHR3 = QLabel(self) #label to show stable HR
         self.lblHR3.setGeometry(900,120,300,40)
@@ -242,14 +241,16 @@ class GUI(QMainWindow, QThread):
                        self.f_fr.strides[0], QImage.Format_RGB888)
         self.lblROI.setPixmap(QPixmap.fromImage(f_img))
         
-        self.lblHR.setText("Freq: " + str(float("{:.2f}".format(self.bpm))))
-        
-        if self.process.bpms.__len__() >48:
-            if(max(self.process.bpms-np.mean(self.process.bpms))<5): #show HR if it is stable -the change is not over 5 bpm- for 3s
-                self.lblHR2.setText("Heart rate: " + str(float("{:.2f}".format(np.mean(self.process.bpms)))) + " bpm")
+        if (distance >= 0.4 ) & (distance <= 0.6):
 
-        #self.make_bpm_plot()#need to open a cv2.imshow() window to handle a pause 
-        #QtTest.QTest.qWait(10)#wait for the GUI to respond
+            self.lblHR.setText("Freq: " + str(float("{:.2f}".format(self.bpm))))
+        
+        if self.process.bpms.__len__() >48 & self.process.bpms.__len__() <= 180 & (distance >= 0.4 ) & (distance <= 0.6):
+        # if self.process.bpms.__len__() >48 & self.process.bpms.__len__() <= 180:
+            if(max(self.process.bpms-np.mean(self.process.bpms))<5): #show HR if it is stable -the change is not over 5 bpm- for 3s
+                self.lblHR2.setText("Calculating: " + str(float("{:.1f}".format(np.mean(self.process.bpms)))) + " bpm")
+
+    
                 
 
 
