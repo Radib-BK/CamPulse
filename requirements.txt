@@ -1,0 +1,11 @@
+scipy==1.10.0
+dlib==19.17.0
+imutils==0.5.2
+numpy==1.22.0
+opencv_contrib_python==4.9.0.80
+PyQt5==5.12.3
+pyqtgraph==0.10.0
+dlib
+pyrealsense2
+dlib-19.24.1-cp311-cp311-win_amd64.whl
+imutils
