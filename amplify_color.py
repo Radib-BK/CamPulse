@@ -219,13 +219,3 @@ if __name__ == "__main__":
     app = VidMag()
     while True:
         app.mainLoop()
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    

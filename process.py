@@ -133,7 +133,7 @@ class Process(object):
    
             self.fft = np.abs(raw)**2#get amplitude spectrum
         
-            idx = np.where((freqs > 50) & (freqs < 180))#the range of frequency that HR is supposed to be within 
+            idx = np.where((freqs > 48) & (freqs < 180))#the range of frequency that HR is supposed to be within 
             pruned = self.fft[idx]
             pfreq = freqs[idx]
             
