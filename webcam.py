@@ -15,7 +15,7 @@ class Webcam(object):
     def start(self):
         print("[INFO] Start webcam")
         time.sleep(1) # wait for camera to be ready
-        self.cap = cv2.VideoCapture(3)
+        self.cap = cv2.VideoCapture(2)
         self.valid = False
         try:
             resp = self.cap.read()

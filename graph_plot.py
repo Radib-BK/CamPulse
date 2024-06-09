@@ -9,9 +9,6 @@ arr_red = []
 arr_green = []
 arr_blue = []
 
-# frame_size = 300 #10 second of 30Hz video
-# frame_buffer = []
-# times = []
 def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
     low = lowcut / nyq

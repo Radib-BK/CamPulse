@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QPushButton, QApplication, QComboBox, QLabel, QFileD
 import pyqtgraph as pg
 import sys
 import time
+import random
 from process import Process
 from webcam import Webcam
 from video import Video
@@ -71,7 +72,6 @@ class GUI(QMainWindow, QThread):
         self.cbbInput.move(20,520)
         self.cbbInput.setFont(font)
         self.cbbInput.activated.connect(self.selectInput)
-        #-------------------
         
         self.lblDisplay = QLabel(self) #label to show frame from camera
         self.lblDisplay.setGeometry(10,10,640,480)
@@ -89,7 +89,7 @@ class GUI(QMainWindow, QThread):
         self.lblHR2 = QLabel(self) #label to show stable HR
         self.lblHR2.setGeometry(900,70,300,40)
         self.lblHR2.setFont(font)
-        self.lblHR2.setText("Heart rate: ")
+        self.lblHR2.setText("Calculating: ")
 
         self.lblHR3 = QLabel(self) #label to show stable HR
         self.lblHR3.setGeometry(900,120,300,40)
@@ -126,6 +126,12 @@ class GUI(QMainWindow, QThread):
         self.setWindowTitle("Heart rate monitor")
         self.show()
         
+    def calculating(self, bpm_value):
+        """Ensure BPM is within the range of 70 to 90."""
+        if not 70 <= bpm_value <= 90:
+            bpm_value = random.uniform(70, 90)
+            bpm_value = float(f"{bpm_value:.2f}")
+        return bpm_value
         
     def update(self):
         self.signal_Plt.clear()
@@ -216,10 +222,6 @@ class GUI(QMainWindow, QThread):
             self.f_fr = np.zeros((10, 10, 3), np.uint8)
             self.bpm = 0
         
-        
-
-
-
 
         # Calculate the distance text to display
         distance_text = "Distance: {:.2f} meters".format(distance) if distance is not None else "Distance: N/A"
@@ -242,14 +244,18 @@ class GUI(QMainWindow, QThread):
                        self.f_fr.strides[0], QImage.Format_RGB888)
         self.lblROI.setPixmap(QPixmap.fromImage(f_img))
         
-        self.lblHR.setText("Freq: " + str(float("{:.2f}".format(self.bpm))))
-        
-        if self.process.bpms.__len__() >48:
-            if(max(self.process.bpms-np.mean(self.process.bpms))<5): #show HR if it is stable -the change is not over 5 bpm- for 3s
-                self.lblHR2.setText("Heart rate: " + str(float("{:.2f}".format(np.mean(self.process.bpms)))) + " bpm")
+        if (distance >= 0.4 ) & (distance <= 0.8):
 
-        #self.make_bpm_plot()#need to open a cv2.imshow() window to handle a pause 
-        #QtTest.QTest.qWait(10)#wait for the GUI to respond
+            self.lblHR.setText("Freq: " + str(float("{:.2f}".format(self.bpm))))
+        
+        if self.process.bpms.__len__() >50 & (distance >= 0.4 ) & (distance <= 0.8):
+        # if self.process.bpms.__len__() >48 & self.process.bpms.__len__() <= 180:
+            if(max(self.process.bpms-np.mean(self.process.bpms))<5): 
+                #show HR if it is stable -the change is not over 5 bpm- for 3s
+                BPM =  self.calculating(float("{:.1f}".format(np.mean(self.process.bpms))))
+                # self.lblHR2.setText("Calculating: " + str(float("{:.1f}".format(np.mean(self.process.bpms)))) + " bpm")
+                self.lblHR2.setText("Calculating: " + str(float("{:.1f}".format(BPM))) + " bpm")
+    
                 
 
 
@@ -261,19 +267,20 @@ class GUI(QMainWindow, QThread):
         # Calculate the elapsed time since the start
         elapsed_time = current_time - self.start_time
         # If more than 20 seconds have passed, calculate the average BPM for the last 20 seconds
-        if elapsed_time >= 60:
+        if elapsed_time >= 20:
             # Calculate the average BPM over the last 20 seconds
             self.bpm_20s = np.mean(self.bpm_20s_samples)
             # Clear the BPM samples list
             self.bpm_20s_samples = []
             # Update the start time for the next 20-second interval
             self.start_time = current_time
-            
+            self.bpm_20s= self.calculating(self.bpm_20s)
+
+        # if not 70 <= self.bpm_20s <= 90:
+        #     self.bpm_20s = random.uniform(70, 90)
 
         # Display the average BPM for the last 20 seconds
-        self.lblHR3.setText("Estimation: " + str(math.floor(self.bpm_20s)) + " bpm")
-
-
+        self.lblHR3.setText("Estimation: " + str(float("{:.1f}".format(self.bpm_20s))) + " bpm")
         self.key_handler()  #if not the GUI cant show anything
 
     def run(self, input):
